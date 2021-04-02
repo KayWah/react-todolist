@@ -4,6 +4,8 @@ import {NavLink} from "react-router-dom"; // 利用 NavLink 组件进行路由�
 
 import {HeaderWrapper} from './style'
 
+import PermissionMenu from "../../components/PermissionMenu";
+
 import {Layout, Menu, Breadcrumb} from "antd";
 
 import {
@@ -24,6 +26,11 @@ function Home(props) {
   const toggle = () => {
     setCollapsed(!collapsed);
   };
+
+  const MenuArray = [{
+    name: '1231231'
+  }]
+
   return (
     <Layout className="todolist-wrapper">
       <Header className="header">
@@ -40,14 +47,19 @@ function Home(props) {
             style={{height: "100%", borderRight: 0}}
           >
             <SubMenu key="sub1" icon={<UserOutlined/>} title="分类">
-              {/*分类*/}
               <Menu.Item key="sub1-1">
-                <NavLink to="/app/all" activeClassName="selected">
+                <NavLink
+                  replace={true}
+                  to={{pathname: "/app", state: {id: 'all'}}}
+                  activeClassName="selected">
                   <span>所有</span>
                 </NavLink>
               </Menu.Item>
               <Menu.Item key="sub1-2">
-                <NavLink to="/app/today" activeClassName="selected">
+                <NavLink
+                  replace={true}
+                  to={{pathname: "/app", state: {id: 'today'}}}
+                  activeClassName="selected">
                   <span>今天</span>
                 </NavLink>
               </Menu.Item>
