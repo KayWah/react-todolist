@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
 
 import { renderRoutes } from "react-router-config";
-import { NavLink } from "react-router-dom"; // 利用 NavLink 组件进行路由跳转
+// import { NavLink, } from "react-router-dom"; // 利用 NavLink 组件进行路由跳转
+
+import {
+  BrowserRouter as Router,
+  Route,
+  NavLink,
+  Switch,
+  Redirect
+} from 'react-router-dom'
+
+import Todolist from "../../application/Todolist";
 
 import { HeaderWrapper, Title } from './style'
 
@@ -91,7 +101,7 @@ function Home(props) {
               <Menu.Item key="sub1-1">
                 <NavLink
                   replace={true}
-                  to={{ pathname: "/app", state: { id: 'all' } }}
+                  to={{ pathname: "/app/all" }}
                   activeClassName="selected">
                   <span>所有</span>
                 </NavLink>
@@ -99,7 +109,7 @@ function Home(props) {
               <Menu.Item key="sub1-2">
                 <NavLink
                   replace={true}
-                  to={{ pathname: "/app", state: { id: 'today' } }}
+                  to={{ pathname: "/app/today" }}
                   activeClassName="selected">
                   <span>今天</span>
                 </NavLink>
@@ -132,7 +142,12 @@ function Home(props) {
               overflowY: 'auto'
             }}
           >
-            {renderRoutes(route.routes)}
+            {/*{renderRoutes(route.routes)}*/}
+            <Switch>
+              <Route path="/app/:id" component={Todolist} />
+              {/*<Route path="/app/today" component={Todolist}/>*/}
+              <Redirect to="/home" />
+            </Switch>
           </Content>
         </Layout>
       </Layout>

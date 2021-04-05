@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
 //伪数据
-import * as today from '../../RequestJson/today.json'
-import * as all from '../../RequestJson/all.json'
 import Todo from "../../components/Todo";
 import NewTodo from "../../components/NewTodo";
 
@@ -10,6 +8,7 @@ import NewTodo from "../../components/NewTodo";
 import { indexDBSuccess, readAll, remove, update, add } from '../../api/indexDB'
 import { findTodoIndex } from '../../api/libs'
 
+import { message } from 'antd';
 
 
 function Todolist(props) {
@@ -17,14 +16,12 @@ function Todolist(props) {
 
   const [todoData, setTodoData] = useState([]);
 
-  const { route, location: { state: { id: pageStatus } } } = props;
-  console.log(pageStatus);
+  const {match: {params: {id}}} = props
+
+  const { route } = props;
+  console.log(id);
 
   let data = [];
-  const { data: todayData } = today.default;
-  const { data: allData } = all.default;
-  console.log(data);
-  pageStatus === 'all' ? data = allData : data = todayData;
 
   useEffect(() => {
     setTimeout(() => {
@@ -42,19 +39,24 @@ function Todolist(props) {
     })
   }
 
-  const newTodo = (data) => {
+  const newTodo = (data, formRef) => {
     console.log(data);
-    add(data)
+    console.log(formRef);
+    add(data, formRef).then(res => {
+      console.log(res);
+      message.success(res);
+      formRef.current.resetFields()
+      let a = JSON.parse(JSON.stringify(todoData));
+      setTodoData([
+        ...todoData, data
+      ])
+    })
   }
 
   function read(db) {
     var transaction = db.transaction(['todolist']);
     var objectStore = transaction.objectStore('todolist');
-    // var request = objectStore.get();
 
-    // request.onerror = function(event) {
-    //   console.log('事务失败');
-    // };
 
     objectStore.openCursor().onsuccess = function (event) {
       var cursor = event.target.result;
@@ -86,12 +88,10 @@ function Todolist(props) {
   return (
     <div key="1">
       <NewTodo newTodo={newTodo}></NewTodo>
-      <div>
-        <input id="newTodo" ref={titleRef} />
-        <button onClick={() => postData()} >新建</button>
-      </div>
-
-      todolist {pageStatus ? pageStatus : null}
+      {/*<div>*/}
+      {/*  <input id="newTodo" ref={titleRef} />*/}
+      {/*  <button onClick={() => postData()} >新建</button>*/}
+      {/*</div>*/}
 
       {
         todoData.length > 0 ? todoData.map(todo => {

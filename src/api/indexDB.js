@@ -1,4 +1,4 @@
-var todolistDB = window.indexedDB.open('todolist', '2');
+var todolistDB = window.indexedDB.open('todolist', '3');
 console.log(todolistDB);
 export function indexDBError(cb) {
     return new Promise(function (resolve, reject) {
@@ -17,15 +17,12 @@ todolistDB.onerror = function (event) {
 
 todolistDB.onsuccess = function (event) {
     db = todolistDB.result;
-    console.log(db);
     console.log('indexdb成功');
 };
 
 let db = null;
 
 export function indexDBSuccess(cb) {
-    console.log(cb);
-    console.log(db);
     return new Promise(function (resolve, reject) {
         if (cb && typeof cb === 'function') {
             resolve(cb(db))
@@ -39,13 +36,13 @@ todolistDB.onupgradeneeded = function (event) {
     if (!db.objectStoreNames.contains('todolist')) {
         objectStore = db.createObjectStore('todolist', { keyPath: 'id', autoIncrement: true });
         // 标题
-        objectStore.createIndex('title', 'title', { unique: true });
+        objectStore.createIndex('title', 'title', { unique: false });
         // 创建时间
         objectStore.createIndex('create_time', 'create_time', { unique: true });
         // 状态 - 是否完成
-        objectStore.createIndex('status', 'status', { unique: true });
+        objectStore.createIndex('status', 'status', { unique: false });
         // 类型
-        objectStore.createIndex('type', 'type', { unique: true });
+        objectStore.createIndex('type', 'type', { unique: false });
         // 日程时间
         objectStore.createIndex('schedule_time', 'schedule_time', { unique: false });
         // 项目名称
@@ -84,20 +81,24 @@ export function readAll(status = "") {
 }
 
 export function add(data) {
-    try {
+    return new Promise((resolve, reject) => {
+        try {
         var todolistDB = db.transaction(['todolist'], 'readwrite')
             .objectStore('todolist')
             .add(data);
         todolistDB.onsuccess = function (event) {
             console.log('数据写入成功');
+            resolve('数据写入成功')
         };
 
         todolistDB.onerror = function (event) {
             console.log('数据写入失败');
+            reject(event)
         }
     } catch (error) {
         console.log(error);
     }
+    })
 }
 
 export function remove(id = -1) {
