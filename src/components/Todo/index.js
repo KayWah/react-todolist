@@ -16,16 +16,12 @@ const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
 
 function Todo(props) {
   const {todo} = props
-  console.log(props);
 
   function removeTodo(id) {
-    console.log(id);
     props.removeTodo(id)
   }
   
   const updateTodo = (data) => {
-    // const _checked = target.checked;
-    console.log(data);
     props.updateTodo(data)
   }
   

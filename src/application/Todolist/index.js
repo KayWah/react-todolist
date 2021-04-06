@@ -1,24 +1,27 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 
-//伪数据
+import {NewTodoWrapper, TodoListWrapper} from './style'
 import Todo from "../../components/Todo";
 import NewTodo from "../../components/NewTodo";
 
 
-import { indexDBSuccess, readAll, remove, update, add } from '../../api/indexDB'
-import { findTodoIndex } from '../../api/libs'
+import {indexDBSuccess, readAll, remove, update, add} from '../../api/indexDB'
+import {findTodoIndex} from '../../api/libs'
 
-import { message } from 'antd';
+import {message, Modal, Button} from 'antd';
+import moment from "moment";
 
 
 function Todolist(props) {
   const titleRef = useRef()
 
   const [todoData, setTodoData] = useState([]);
+  const [form, setForm] = useState(null);
+  const [visible, setVisible] = useState(false);
 
   const {match: {params: {id}}} = props
 
-  const { route } = props;
+  const {route} = props;
   console.log(id);
 
   let data = [];
@@ -32,27 +35,48 @@ function Todolist(props) {
     }, 1000);
   }, [])
 
-  const postData = () => {
-    indexDBSuccess(add).then(() => {
-      console.log('提交成功');
-      titleRef.current.value = ""
-    })
+  // const newTodo = (data, formRef) => {
+  //   add(data).then(res => {
+  //     message.success(res);
+  //     formRef.current.resetFields()
+  //     setTodoData([
+  //       ...todoData, data
+  //     ])
+  //   })
+  // }
+
+  /*
+  * 获取modal里面的子组件form
+  * */
+  const getForm = (form) => {
+    setForm(form)
   }
 
-  const newTodo = (data, formRef) => {
-    console.log(data);
-    console.log(formRef);
-    add(data, formRef).then(res => {
-      console.log(res);
-      message.success(res);
-      formRef.current.resetFields()
-      let a = JSON.parse(JSON.stringify(todoData));
-      setTodoData([
-        ...todoData, data
-      ])
+  const modelForm = () => {
+    form.validateFields()
+      .then((fieldsValue) => {
+        const values = {
+          ...fieldsValue,
+          'schedule_time': fieldsValue['schedule_time'] ? moment(fieldsValue['schedule_time'].format('YYYY-MM-DD hh:mm:ss')).valueOf() : '',
+          'status': fieldsValue['status'] === "true" ? true : false,
+          'create_time': new Date().getTime()
+        };
+        add(values).then(res => {
+          message.success(res);
+          setTodoData([
+            ...todoData, values
+          ])
+          setVisible(false)
+        })
+        console.log(values);
+      }).catch(err => {
+      console.log(err);
     })
-  }
 
+  }
+  const onReset = () => {
+    form.resetFields()
+  };
   function read(db) {
     var transaction = db.transaction(['todolist']);
     var objectStore = transaction.objectStore('todolist');
@@ -86,19 +110,35 @@ function Todolist(props) {
   }
 
   return (
-    <div key="1">
-      <NewTodo newTodo={newTodo}></NewTodo>
-      {/*<div>*/}
-      {/*  <input id="newTodo" ref={titleRef} />*/}
-      {/*  <button onClick={() => postData()} >新建</button>*/}
-      {/*</div>*/}
-
+    <TodoListWrapper key="1">
+      <Button type="primary" onClick={() => setVisible(true)}>
+        新增
+      </Button>
+      <Modal
+        title="Modal 1000px width"
+        centered
+        visible={visible}
+        onCancel={() => setVisible(false)}
+        width={1000}
+        footer={[
+          <Button key="formSubmit" type="primary" htmlType="submit" onClick={() => modelForm()}>
+            提交
+          </Button>,
+          <Button key="formCancel" htmlType="button" onClick={() => onReset()}>
+            重置
+          </Button>
+        ]}
+      >
+        <NewTodo key="newTodo"
+          // newTodo={newTodo}
+          getForm={getForm} actions={false}></NewTodo>
+      </Modal>
       {
         todoData.length > 0 ? todoData.map(todo => {
           return <Todo key={todo.id} todo={todo} removeTodo={removeTodo} updateTodo={updateTodo}></Todo>
         }) : <div>暂无数据</div>
       }
-    </div>
+    </TodoListWrapper>
   )
 }
 
