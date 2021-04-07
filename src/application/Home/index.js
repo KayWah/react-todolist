@@ -55,7 +55,6 @@ function Home(props) {
 
   function add(db) {
     try {
-      console.log('add', db);
       const time = new Date().getTime()
       var todolistDB = db.transaction(['todolist'], 'readwrite')
         .objectStore('todolist')
@@ -70,7 +69,6 @@ function Home(props) {
       }
     } catch (error) {
       console.log(error);
-      console.log(db);
     }
 
   }
@@ -112,6 +110,14 @@ function Home(props) {
                   to={{ pathname: "/app/today" }}
                   activeClassName="selected">
                   <span>今天</span>
+                </NavLink>
+              </Menu.Item>
+              <Menu.Item key="sub1-3">
+                <NavLink
+                  replace={true}
+                  to={{ pathname: "/app/history" }}
+                  activeClassName="selected">
+                  <span>历史</span>
                 </NavLink>
               </Menu.Item>
             </SubMenu>

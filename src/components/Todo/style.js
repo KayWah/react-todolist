@@ -14,7 +14,6 @@ export const TodoWrapper = styled.div`
   border-bottom: 1px solid #dcdcdc;
   .chackbox{
       margin-right: 1em;
-      //align-items: center;
       .ant-checkbox{
           top: 0;
       }
@@ -28,10 +27,14 @@ export const TodoWrapper = styled.div`
   .content{
     display: flex;
     width: 100%;
-    margin-bottom: 1em;
+  }
+  .action-bar{
+    margin-left: auto;
+  }
+  .action{
+    margin-left: 0.5em;
   }
   .delete{
-    margin-left: auto;
     cursor: pointer;
   }
 

@@ -16,7 +16,7 @@ todolistDB.onerror = function (event) {
 };
 
 todolistDB.onsuccess = function (event) {
-    db = todolistDB.result;
+    db = event.target.result;
     console.log('indexdb成功');
 };
 
@@ -53,31 +53,33 @@ todolistDB.onupgradeneeded = function (event) {
 }
 
 export function readAll(status = "") {
-    var transaction = db.transaction(['todolist']);
-    var objectStore = transaction.objectStore('todolist');
+   try {
+       return new Promise((resolve, reject) => {
+           var transaction = db.transaction(['todolist']);
+           var objectStore = transaction.objectStore('todolist');
+           const dataAll = [];
+           objectStore.openCursor().onerror = function (event) {
+               console.log('事务失败');
+           };
 
-    return new Promise((resolve, reject) => {
-        const dataAll = [];
-        objectStore.openCursor().onerror = function (event) {
-            console.log('事务失败');
-        };
+           objectStore.openCursor().onsuccess = function (event) {
+               var cursor = event.target.result;
 
-        objectStore.openCursor().onsuccess = function (event) {
-            var cursor = event.target.result;
-
-            if (cursor) {
-                if (status) {
-                    dataAll.push(cursor.value.status === status ? cursor.value : null);
-                } else {
-                    dataAll.push(cursor.value);
-                }
-                cursor.continue();
-            } else {
-                resolve(dataAll);
-                console.log('没有更多数据了！');
-            }
-        };
-    })
+               if (cursor) {
+                   if (status) {
+                       dataAll.push(cursor.value.status === status ? cursor.value : null);
+                   } else {
+                       dataAll.push(cursor.value);
+                   }
+                   cursor.continue();
+               } else {
+                   resolve(dataAll);
+               }
+           };
+       })
+   } catch (err) {
+        console.log(err);
+    }
 }
 
 export function add(data) {
@@ -87,12 +89,10 @@ export function add(data) {
             .objectStore('todolist')
             .add(data);
         todolistDB.onsuccess = function (event) {
-            console.log('数据写入成功');
             resolve('数据写入成功')
         };
 
         todolistDB.onerror = function (event) {
-            console.log('数据写入失败');
             reject(event)
         }
     } catch (error) {

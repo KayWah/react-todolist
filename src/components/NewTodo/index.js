@@ -66,10 +66,9 @@ function NewTodo(props) {
       </Form.Item>
       <Form.Item
         name={['status']} label="状态"
+        initialvalues="false"
       >
         <Select
-          // initialvalues="false"
-          defaultValue="false"
           placeholder="请选择状态"
           style={{width: 140, display: 'flex'}}
         >
@@ -93,7 +92,6 @@ function NewTodo(props) {
           </Button>
         </Form.Item> : null
       }
-
     </Form>
   );
 }

@@ -2,17 +2,14 @@ import React from 'react'
 
 import {TodoWrapper} from './style'
 
-import { Typography, Space, Checkbox, DatePicker } from 'antd';
+import { Typography, Button, Checkbox, DatePicker } from 'antd';
+
 import moment from 'moment';
 import locale from 'antd/es/date-picker/locale/zh_CN';
 
-const { Text, Link } = Typography;
-
+const { Text, Paragraph } = Typography;
 
 const dateFormat = 'YYYY/MM/DD hh:mm:ss';
-const monthFormat = 'YYYY/MM';
-
-const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
 
 function Todo(props) {
   const {todo} = props
@@ -24,6 +21,8 @@ function Todo(props) {
   const updateTodo = (data) => {
     props.updateTodo(data)
   }
+
+  const btnSize = 'small'
   
   return (
     <TodoWrapper>
@@ -31,22 +30,30 @@ function Todo(props) {
       <div className="task-item">
         <div className="content">
           <div className="info">
-            {todo.title}
-            {/*{moment(parseInt(todo.create_time)).format('YYYY/MM/DD')}*/}
+            <Paragraph copyable>{todo.title}</Paragraph>
           </div>
-          <Text type="danger" className="delete" onClick={() => {
-            removeTodo(todo.id)
-          }}>
-            删除
-          </Text>
+          <div className="action-bar">
+           {
+             todo.status ? null :
+               <Button type="link" primary className="edit action" size={btnSize} onClick={() => {
+               removeTodo(todo.id)
+             }}>
+               编辑
+             </Button>
+           }
+            <Button type="link" danger className=" action" size={btnSize} onClick={() => {
+              removeTodo(todo.id)
+            }}>
+              删除
+            </Button>
+         </div>
         </div>
         <div className="actions">
-          <DatePicker locale={locale} defaultValue={
+          <DatePicker size="small" locale={locale} defaultValue={
             todo.schedule_time ?  moment(moment(parseInt(todo.schedule_time)).format('YYYY/MM/DD hh:mm:ss'), dateFormat)  : ''
           } format={dateFormat} showTime />
         </div>
       </div>
-
     </TodoWrapper>
   )
 }

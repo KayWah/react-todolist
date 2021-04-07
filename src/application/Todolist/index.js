@@ -1,49 +1,55 @@
 import React, {useEffect, useRef, useState} from "react";
 
-import {NewTodoWrapper, TodoListWrapper} from './style'
+import {LoadingWrapper, TodoListWrapper} from './style'
 import Todo from "../../components/Todo";
 import NewTodo from "../../components/NewTodo";
 
 
+
 import {indexDBSuccess, readAll, remove, update, add} from '../../api/indexDB'
-import {findTodoIndex} from '../../api/libs'
+import {findTodoIndex, isToday} from '../../api/libs'
 
 import {message, Modal, Button} from 'antd';
 import moment from "moment";
 
 
 function Todolist(props) {
+
   const titleRef = useRef()
 
+  const [loading, setLoading] = useState(true)
+
   const [todoData, setTodoData] = useState([]);
+
+  const [type, setType] = useState('all');
+
   const [form, setForm] = useState(null);
+
   const [visible, setVisible] = useState(false);
 
   const {match: {params: {id}}} = props
 
   const {route} = props;
-  console.log(id);
-
-  let data = [];
 
   useEffect(() => {
+    setType(id)
+    setTodoData([])
+    setLoading(true)
     setTimeout(() => {
       readAll().then(res => {
-        console.log(res);
-        setTodoData(res)
+        setTodoData(isToday(res, id))
+        setLoading(false)
+      }).catch(err => {
+        console.log(err);
       })
-    }, 1000);
-  }, [])
+    }, 500);
+  }, [id])
 
-  // const newTodo = (data, formRef) => {
-  //   add(data).then(res => {
-  //     message.success(res);
-  //     formRef.current.resetFields()
-  //     setTodoData([
-  //       ...todoData, data
-  //     ])
-  //   })
-  // }
+  function getData () {
+    readAll().then(res => {
+      setTodoData(isToday(res, type))
+    })
+  }
 
   /*
   * 获取modal里面的子组件form
@@ -68,7 +74,6 @@ function Todolist(props) {
           ])
           setVisible(false)
         })
-        console.log(values);
       }).catch(err => {
       console.log(err);
     })
@@ -96,12 +101,11 @@ function Todolist(props) {
 
   function removeTodo(id) {
     remove(id).then(res => {
-      const a = findTodoIndex(todoData, id)
-      if (a > 0) {
         const data = JSON.parse(JSON.stringify(todoData));
-        data.splice(a, 1)
+      const a = findTodoIndex(data, id)
+      console.log(a);
+      data.splice(a, 1)
         setTodoData(data)
-      }
     })
   }
 
@@ -134,9 +138,9 @@ function Todolist(props) {
           getForm={getForm} actions={false}></NewTodo>
       </Modal>
       {
-        todoData.length > 0 ? todoData.map(todo => {
+        loading ? <LoadingWrapper>数据加载中</LoadingWrapper> : todoData.length > 0 ? todoData.map(todo => {
           return <Todo key={todo.id} todo={todo} removeTodo={removeTodo} updateTodo={updateTodo}></Todo>
-        }) : <div>暂无数据</div>
+        }) : <LoadingWrapper>暂无数据</LoadingWrapper>
       }
     </TodoListWrapper>
   )
