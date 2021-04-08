@@ -33,14 +33,14 @@ function Todo(props) {
             <Paragraph copyable>{todo.title}</Paragraph>
           </div>
           <div className="action-bar">
-           {
-             todo.status ? null :
-               <Button type="link" primary className="edit action" size={btnSize} onClick={() => {
-               removeTodo(todo.id)
-             }}>
-               编辑
-             </Button>
-           }
+           {/*{*/}
+           {/*  todo.status ? null :*/}
+           {/*    <Button type="link" primary className="edit action" size={btnSize} onClick={() => {*/}
+           {/*    removeTodo(todo.id)*/}
+           {/*  }}>*/}
+           {/*    编辑*/}
+           {/*  </Button>*/}
+           {/*}*/}
             <Button type="link" danger className=" action" size={btnSize} onClick={() => {
               removeTodo(todo.id)
             }}>

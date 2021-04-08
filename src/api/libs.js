@@ -26,3 +26,20 @@ export const isToday = (timestampArray, type) => {
     }
     return arr
 }
+
+export const filterChartData = (timestampArray, type) => {
+    let arr = {};
+    let chareData = []
+    timestampArray.map(item => {
+        const _time = moment(parseInt(item.schedule_time)).format('YYYY/MM/DD');
+        item.schedule_time ? arr[_time] ? arr[_time] = arr[_time]++ : arr[_time] = 1 : arr['无时间'] ? arr['无时间'] = arr['无时间']++ : arr['无时间'] = 1
+    })
+    Object.keys(arr).map(item => {
+        chareData.push({
+            timer: item,
+            num: arr[item]
+        })
+    })
+    console.log(chareData);
+    return chareData
+}

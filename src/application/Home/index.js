@@ -12,6 +12,7 @@ import {
 } from 'react-router-dom'
 
 import Todolist from "../../application/Todolist";
+import Visualization from "../../application/Visualization";
 
 import { HeaderWrapper, Title } from './style'
 
@@ -20,9 +21,6 @@ import PermissionMenu from "../../components/PermissionMenu";
 import { Layout, Menu, Breadcrumb } from "antd";
 
 import logo from './../../logo.svg';
-
-import {indexDBSuccess, readAll} from '../../api/indexDB'
-
 
 import {
   UserOutlined,
@@ -47,12 +45,6 @@ function Home(props) {
     name: '1231231'
   }]
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     readAll()      
-  //   }, 1000);
-  // },[])
-
   function add(db) {
     try {
       const time = new Date().getTime()
@@ -72,10 +64,6 @@ function Home(props) {
     }
 
   }
-  // indexDBSuccess(add)
-
-  // add();
-
 
   return (
     <Layout className="todolist-wrapper">
@@ -136,6 +124,20 @@ function Home(props) {
               <Menu.Item key="11">不重要紧急</Menu.Item>
               <Menu.Item key="12">不重要不紧急</Menu.Item>
             </SubMenu>
+            <SubMenu
+              key="sub4"
+              icon={<NotificationOutlined />}
+              title="可视化"
+            >
+              <Menu.Item key="10">
+                <NavLink
+                  replace={true}
+                  to={{ pathname: "/Visualization/all" }}
+                  activeClassName="selected">
+                  <span>任务</span>
+                </NavLink>
+              </Menu.Item>
+            </SubMenu>
           </Menu>
         </Sider>
         <Layout>
@@ -151,6 +153,7 @@ function Home(props) {
             {/*{renderRoutes(route.routes)}*/}
             <Switch>
               <Route path="/app/:id" component={Todolist} />
+              <Route path="/Visualization/:id" component={Visualization} />
               {/*<Route path="/app/today" component={Todolist}/>*/}
               <Redirect to="/home" />
             </Switch>
