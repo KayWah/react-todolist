@@ -17,6 +17,11 @@ serviceWorker.js      // PWA 离线应用配置
 style.js              // 默认样式
 ```
 
+```
+indexDB
+axios
+```
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

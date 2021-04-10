@@ -53,7 +53,7 @@ export const GlobalStyle = createGlobalStyle`
 	}
 	a {
 		text-decoration: none;
-		color: #fff;
+		//color: #fff;
 	}
 	#root{
 	width: 100%;

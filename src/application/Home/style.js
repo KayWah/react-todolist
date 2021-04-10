@@ -6,4 +6,14 @@ export const HeaderWrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+  flex-flow: nowrap;
+  align-items: center;
+
+  .logo{
+    width: 50px;
+    height: 50px;
+  }
+`;
+
+export const Title = styled.div`
 `;
